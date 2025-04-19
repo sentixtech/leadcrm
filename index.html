@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lead API Integration | LeadCRM</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary: #34d399; /* Lighter emerald green */
+            --primary-dark: #10b981;
+            --primary-light: #a7f3d0;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            color: var(--light);
+        }
+        
+        p, li {
+            color: var(--gray);
+            font-weight: 400;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(15, 23, 42, 0.95), rgba(2, 6, 23, 0.98)), 
+                        url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-gradient {
+            background: linear-gradient(to right, var(--darker), var(--dark));
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .api-card {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .api-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(52, 211, 153, 0.15);
+            border-color: var(--primary-light);
+        }
+        
+        .form-highlight {
+            background: rgba(52, 211, 153, 0.08);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            color: var(--darker);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .btn-outline-light:hover {
+            color: var(--darker);
+        }
+        
+        code {
+            color: var(--primary-light);
+            background: rgba(52, 211, 153, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        pre {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            color: white;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .list-group-item {
+            background: #1e293b;
+            color: var(--light);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        
+        .text-muted {
+            color: var(--gray) !important;
+        }
+        
+        .accordion-button {
+            background: #1e293b;
+            color: white;
+        }
+        
+        .accordion-button:not(.collapsed) {
+            background: #1e293b;
+            color: var(--primary);
+        }
+        
+        .bg-gray-800 {
+            background-color: #1e293b;
+        }
+        
+        .bg-gray-900 {
+            background-color: #0f172a;
+        }
+        
+        /* Improved contrast for readability */
+        .card {
+            background: #1e293b;
+            color: var(--light);
+        }
+        
+        .card-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark nav-gradient py-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-shield-check me-2" style="color: var(--primary); font-size: 1.5rem;"></i>
+                <span class="fw-bold">Lead<span style="color: var(--primary)">CRM</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#api-docs">API Docs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#integrations">Integrations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container py-5 text-center animate__animated animate__fadeIn">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-3 fw-bold mb-4" style="color: white;">Powerful Lead Management API</h1>
+                    <p class="lead mb-5" style="color: var(--gray);">Seamlessly integrate lead capture with our modern, secure API designed for developers and marketers</p>
+                    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                        <a href="#api-docs" class="btn btn-primary btn-lg px-4 animate__animated animate__pulse animate__infinite">
+                            <i class="bi bi-code-slash me-2"></i> View API Docs
+                        </a>
+                        <a href="#contact" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-telephone me-2"></i> Get API Token
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation -->
+    <section id="api-docs" class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title fw-bold animate__animated animate__fadeIn">API Documentation</h2>
+                <p class="text-muted mt-3">Everything you need to integrate with our lead management system</p>
+            </div>
+            
+            <div class="row g-4">
+                <!-- API Basics -->
+                <div class="col-md-6 animate__animated animate__fadeInLeft">
+                    <div class="api-card card h-100 shadow-sm p-4">
+                        <div class="feature-icon">
+                            <i class="bi bi-cloud-arrow-up"></i>
+                        </div>
+                        <h3 class="mb-4" style="color: white;">API Endpoint</h3>
+                        <div class="mb-4">
+                            <span class="badge bg-success me-2">POST</span>
+                            <code style="color: var(--primary-light);">https://api.leadcrm.com/lead/submit</code>
+                        </div>
+                        <h4 class="mt-4" style="color: white;">Required Fields</h4>
+                        <ul class="list-group list-group-flush mb-4">
+                            <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i> <code>name</code> (string)</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i> <code>email</code> (valid email)</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i> <code>phone</code> (10-digit number)</li>
+                            <li class="list-group-item"><i class="bi bi-check-circle-fill text-success me-2"></i> <code>budget</code> (numeric, min 1)</li>
+                        </ul>
+                        <h4 style="color: white;">Optional Fields</h4>
+                        <p>Any additional parameters will be stored as custom metadata with the lead.</p>
+                    </div>
+                </div>
+
+                <!-- Authentication -->
+                <div class="col-md-6 animate__animated animate__fadeInRight">
+                    <div class="api-card card h-100 shadow-sm p-4">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <h3 class="mb-4" style="color: white;">Authentication</h3>
+                        <p>Secure your API requests with the token provided to you:</p>
+                        <div class="form-highlight p-3 mb-4">
+                            <code style="color: var(--primary-light);">X-API-TOKEN: your_api_token_here</code>
+                        </div>
+                        <div class="alert" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);">
+                            <h5 style="color: white;"><i class="bi bi-key me-2"></i> How to Get Your Token?</h5>
+                            <p class="mb-0">Contact our support team at <a href="tel:+918302618469" class="fw-bold" style="color: var(--primary);">+91 8302618469</a> or email <a href="mailto:api@leadcrm.com" class="fw-bold" style="color: var(--primary);">api@leadcrm.com</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Examples -->
+    <section id="integrations" class="py-5 bg-gray-900">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <h2 class="section-title fw-bold animate__animated animate__fadeIn">Integration Guides</h2>
+                <p class="text-muted mt-3">Code samples for popular platforms and frameworks</p>
+            </div>
+            
+            <!-- Custom AJAX -->
+            <div class="card mb-4 border-0 bg-gray-800 animate__animated animate__fadeInUp">
+                <div class="card-header bg-transparent border-bottom" style="border-color: rgba(255,255,255,0.1);">
+                    <h4 style="color: white;"><i class="bi bi-code-square me-2 text-primary"></i> Custom AJAX Implementation</h4>
+                </div>
+                <div class="card-body">
+                    <pre><code class="language-javascript" style="color: var(--primary-light);">
+// Using jQuery AJAX
+$.ajax({
+    url: 'https://api.leadcrm.com/lead/submit',
+    type: 'POST',
+    headers: {
+        'X-API-TOKEN': 'YOUR_API_TOKEN_HERE',
+        'Content-Type': 'application/json'
+    },
+    data: JSON.stringify({
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '9876543210',
+        budget: 50000,
+        // Optional custom fields:
+        source: 'website-contact-form',
+        interest: 'premium-package',
+        utm_campaign: 'summer_sale'
+    }),
+    success: function(response) {
+        console.log('Lead created:', response);
+        // Show success message to user
+        $('#form-message').html('&lt;div class="alert alert-success"&gt;Thank you! We\'ll contact you shortly.&lt;/div&gt;');
+    },
+    error: function(xhr) {
+        console.error('Error:', xhr.responseJSON);
+        // Show error message
+        $('#form-message').html('&lt;div class="alert alert-danger"&gt;Error: ' + xhr.responseJSON.message + '&lt;/div&gt;');
+    }
+});
+                    </code></pre>
+                </div>
+            </div>
+
+            <!-- WordPress Section -->
+            <div class="row mt-4">
+                <div class="col-md-6 animate__animated animate__fadeInLeft">
+                    <div class="card h-100 border-0 bg-gray-800">
+                        <div class="card-header bg-transparent border-bottom" style="border-color: rgba(255,255,255,0.1);">
+                            <h4 style="color: white;"><i class="bi bi-wordpress me-2 text-primary"></i> WordPress (Elementor)</h4>
+                        </div>
+                        <div class="card-body">
+                            <ol class="list-group list-group-numbered list-group-flush">
+                                <li class="list-group-item bg-transparent text-light" style="border-color: rgba(255,255,255,0.1);">Create a form with Elementor</li>
+                                <li class="list-group-item bg-transparent text-light" style="border-color: rgba(255,255,255,0.1);">Add "Webhook" action in form settings</li>
+                                <li class="list-group-item bg-transparent text-light" style="border-color: rgba(255,255,255,0.1);">Set URL to <code>https://api.leadcrm.com/lead/submit</code></li>
+                                <li class="list-group-item bg-transparent text-light" style="border-color: rgba(255,255,255,0.1);">Add custom header: <code>X-API-TOKEN: YOUR_TOKEN</code></li>
+                                <li class="list-group-item bg-transparent text-light" style="border-color: rgba(255,255,255,0.1);">Map form fields to API parameters</li>
+                            </ol>
+                            <div class="mt-3">
+                                <img src="https://images.unsplash.com/photo-1623282033815-40b05d96c903?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="WordPress Elementor" class="img-fluid rounded mt-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 animate__animated animate__fadeInRight">
+                    <div class="card h-100 border-0 bg-gray-800">
+                        <div class="card-header bg-transparent border-bottom" style="border-color: rgba(255,255,255,0.1);">
+                            <h4 style="color: white;"><i class="bi bi-plug me-2 text-primary"></i> Other Platforms</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="platformAccordion">
+                                <div class="accordion-item bg-transparent" style="border-color: rgba(255,255,255,0.1);">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button bg-gray-700 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                            Contact Form 7
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#platformAccordion">
+                                        <div class="accordion-body">
+                                            <p>Use the <strong>CF7 to Webhook</strong> plugin:</p>
+                                            <ol>
+                                                <li>Install and activate the plugin</li>
+                                                <li>Configure webhook URL to our API endpoint</li>
+                                                <li>Add custom headers with your token</li>
+                                                <li>Map form fields</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item bg-transparent" style="border-color: rgba(255,255,255,0.1);">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed bg-gray-700 text-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                            Zapier Integration
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#platformAccordion">
+                                        <div class="accordion-body">
+                                            <p>Create a new Zap with Webhooks by Zapier:</p>
+                                            <ol>
+                                                <li>Trigger: Your form/application</li>
+                                                <li>Action: Custom Webhook</li>
+                                                <li>Method: POST</li>
+                                                <li>URL: Our API endpoint</li>
+                                                <li>Add <code>X-API-TOKEN</code> header</li>
+                                                <li>Map data fields</li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-5" style="background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);">
+        <div class="container py-5 text-center animate__animated animate__fadeIn">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-4" style="color: white;">Ready to Start Capturing Leads?</h2>
+                    <p class="lead mb-5" style="color: var(--gray);">Get your API token today and integrate with our powerful lead management system in minutes</p>
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <a href="tel:+918302618469" class="btn btn-primary btn-lg px-4 animate__animated animate__pulse animate__infinite">
+                            <i class="bi bi-telephone me-2"></i> Call Now: +91 8302618469
+                        </a>
+                        <a href="mailto:api@leadcrm.com" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-envelope me-2"></i> Email Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-5" style="background-color: black;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-4" style="color: var(--primary);">LeadCRM</h5>
+                    <p style="color: var(--gray);">Powerful lead management and customer relationship tools for modern businesses.</p>
+                </div>
+                <div class="col-md-2 mb-4 mb-md-0">
+                    <h5 class="mb-4" style="color: white;">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#api-docs" class="text-muted">API Docs</a></li>
+                        <li class="mb-2"><a href="#integrations" class="text-muted">Integrations</a></li>
+                        <li class="mb-2"><a href="#contact" class="text-muted">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="mb-4" style="color: white;">Contact Info</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li class="mb-2"><i class="bi bi-telephone me-2"></i> +91 8302618469</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2"></i> api@leadcrm.com</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-4" style="color: white;">Connect With Us</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="bi bi-twitter" style="font-size: 1.5rem;"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-linkedin" style="font-size: 1.5rem;"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-facebook" style="font-size: 1.5rem;"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+            <div class="text-center text-muted">
+                <p class="mb-0">© 2023 LeadCRM. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery for examples -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Animation trigger on scroll -->
+    <script>
+        // Enhanced scroll animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const animateEls = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.dataset.animate || 'fadeIn';
+                        entry.target.classList.add('animate__' + animation);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animateEls.forEach(el => observer.observe(el));
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
